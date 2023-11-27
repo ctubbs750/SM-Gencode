@@ -1,0 +1,39 @@
+name: gencode
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1
+  - _openmp_mutex=4.5
+  - bedtools=2.31.1
+  - bzip2=1.0.8
+  - ca-certificates=2023.11.17
+  - gawk=5.3.0
+  - gettext=0.21.1
+  - gmp=6.3.0
+  - ld_impl_linux-64=2.40
+  - libffi=3.4.2
+  - libgcc-ng=13.2.0
+  - libgomp=13.2.0
+  - libnsl=2.0.1
+  - libsqlite=3.44.0
+  - libstdcxx-ng=13.2.0
+  - libzlib=1.2.13
+  - mpfr=4.2.1
+  - ncurses=6.4
+  - openssl=3.1.4
+  - pip=23.3.1
+  - python=3.7.12
+  - readline=8.2
+  - setuptools=68.2.2
+  - sqlite=3.44.0
+  - tk=8.6.13
+  - vawk=0.0.2
+  - wheel=0.41.3
+  - xz=5.2.6
+  - pip:
+      - gtfparse==1.3.0
+      - numpy==1.21.6
+      - pandas==1.3.5
+      - pytz==2023.3.post1

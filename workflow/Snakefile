@@ -1,0 +1,87 @@
+"""Rule set for installing all gencode"""
+
+from snakemake.utils import min_version
+
+min_version("7.0")
+
+
+configfile: "../config/config.yaml"
+
+
+# Parameters
+INSTALL_DIR = config["INSTALL_DIR"]
+PROCESS_DIR = config["PROCESS_DIR"]
+GENOME_TAGS = config["GENOME_TAGS"]
+FEATURE_LIST = config["FEATURE_LIST"]
+GENCODE_HG19 = config["URLS"]["GENCODE_HG19"]
+GENCODE_HG38 = config["URLS"]["GENCODE_HG38"]
+CHROM_SIZES_HG19 = config["URLS"]["CHROM_SIZES_HG19"]
+CHROM_SIZES_HG38 = config["URLS"]["CHROM_SIZES_HG38"]
+
+
+# Define modules
+module parse:
+    snakefile:
+        "rules/parse.smk"
+    config:
+        config
+
+
+module genes:
+    snakefile:
+        "rules/genes.smk"
+    config:
+        config
+
+
+# Import modules
+use rule * from genes as genes_*
+
+
+use rule * from parse as parse_*
+
+
+###
+# Rules
+###
+
+
+rule all:
+    input:
+        rules.parse_all.input,
+        rules.genes_all.input,
+    default_target: True
+
+
+rule download_gencode:
+    output:
+        INSTALL_DIR + "/gencode.{build}.basic.annotation.gtf.gz",
+    params:
+        build=lambda wc: "{}".format(wc.build),
+        hg19_url=GENCODE_HG19,
+        hg38_url=GENCODE_HG38,
+    shell:
+        """
+        if [[ {params.build} == "hg19" ]]; then
+            curl {params.hg19_url} -o {output}
+        else
+            curl {params.hg38_url} -o {output}
+        fi
+        """
+
+
+rule chromosome_sizes:
+    output:
+        temp(INSTALL_DIR + "/{build}.fa.sizes"),
+    params:
+        build=lambda wc: "{}".format(wc.build),
+        hg19_sizes=CHROM_SIZES_HG19,
+        hg38_sizes=CHROM_SIZES_HG38,
+    shell:
+        """
+        if [[ {params.build} == "hg19" ]]; then
+            curl {params.hg19_sizes} -o {output}
+        else
+            curl {params.hg38_sizes} -o {output}
+        fi
+        """
