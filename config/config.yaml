@@ -1,13 +1,18 @@
-INSTALL_DIR: "../resources"
-PROCESS_DIR: "../results"
-GENOME_TAGS:
-  - "hg19"
-  - "hg38"
-FEATURE_LIST:
-  - "tss"
-PROMOTER_WINDOW: 2000
-URLS:
-  GENCODE_HG19: "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/GRCh37_mapping/gencode.v44lift37.basic.annotation.gtf.gz"
-  GENCODE_HG38: "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.basic.annotation.gtf.gz"
-  CHROM_SIZES_HG19: "https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.chrom.sizes"
-  CHROM_SIZES_HG38: "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes"
+GENCODE:
+  # Target installation and processing directories
+  INSTALL_DIR: resources/data
+  PROCESS_DIR: results
+  # Genome build
+  ASSEMBLY:
+    - "hg38"
+  # List of features to build
+  FEATURE_LIST:
+    - "tss"
+  # Size of window on TSS to define promoters
+  PROMOTER_WINDOW: 2000
+  # GENCODE URLS
+  URLS:
+    GENCODE_HG19: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/GRCh37_mapping/gencode.v44lift37.basic.annotation.gtf.gz
+    GENCODE_HG38: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.basic.annotation.gtf.gz
+    CHROM_SIZES_HG19: https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.chrom.sizes
+    CHROM_SIZES_HG38: https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes

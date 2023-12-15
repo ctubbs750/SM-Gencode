@@ -1,7 +1,3 @@
-"""
-Ruleset for d
-"""
-
 # Parameters
 INSTALL_DIR = config["INSTALL_DIR"]
 PROCESS_DIR = config["PROCESS_DIR"]
