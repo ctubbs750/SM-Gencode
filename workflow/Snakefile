@@ -45,7 +45,7 @@ use rule * from parse as parse_*
 
 rule all:
     input:
-        rules.fetch_all.input,
-        rules.parse_all.input,
+        #rules.fetch_all.input,
+        #rules.parse_all.input,
         rules.genes_all.input,
     default_target: True

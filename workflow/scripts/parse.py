@@ -16,10 +16,13 @@ def read_gencode(filepath: str) -> DataFrame:
 def main() -> None:
     """Main"""
     # Read gtf with gtfparse and write out to tsv
-    gtf = read_gtf(input[0])
+    gtf = read_gtf(GENCODE_GTF)
+    
+    print(gtf.head())
     
     # Format to bed
     fields = [0, 3, 5, 2, 6, 8, 9, 10]
+    fields = ["seqname","start","end","gene_id","gene_id","gene_id","gene_id","gene_id",]
     gtf = gtf[fields]
     
     # Strip "." of gene name

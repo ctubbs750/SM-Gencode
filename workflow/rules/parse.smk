@@ -22,7 +22,7 @@ rule parse_gencode:
         stdout=f"workflow/logs/parse_gencode-{ASSEMBLY}.stdout",
         stderr=f"workflow/logs/parse_gencode-{ASSEMBLY}.stderr",
     conda:
-        "envs/gencode.yaml"
+        "../envs/gencode.yaml"
     threads: 8
     script:
         "../scripts/parse.py"
