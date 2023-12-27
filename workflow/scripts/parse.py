@@ -1,37 +1,26 @@
-"""D"""
+"""Script to parse input GTF file using gtfparse"""
 
-from pandas import read_csv, DataFrame
 from gtfparse import read_gtf
 
 # Snakemake
-GENCODE_GTF = snakemake.input[0]  # type: ignore
-OUTPUT = snakemake.output[0]  # type: ignore
-
-
-def read_gencode(filepath: str) -> DataFrame:
-    """Returns DF of metadata"""
-    return read_gtf(filepath)
-
+GTF = snakemake.input[0]  # type: ignore
+OUT = snakemake.output[0]  # type: ignore
 
 def main() -> None:
-    """Main"""
-    # Read gtf with gtfparse and write out to tsv
-    gtf = read_gtf(GENCODE_GTF)
-    
-    print(gtf.head())
+    """Reads GTF, subsets to fields, and cleans gene/transcript names"""
+    # Read gtf with gtfparse
+    gtf = read_gtf(GTF)
     
     # Format to bed
-    fields = [0, 3, 5, 2, 6, 8, 9, 10]
-    fields = ["seqname","start","end","gene_id","gene_id","gene_id","gene_id","gene_id",]
+    fields = ["seqname","start","end","gene_id", "strand","gene_name","gene_type", "transcript_id", "feature"]
     gtf = gtf[fields]
     
-    # Strip "." of gene name
-    gtf[5] = [i[0] for i in gtf[5].str.split(".")]
+    # Strip "." of gene and transcript IDs
+    gtf["gene_id"] = [i[0] for i in gtf["gene_id"].str.split(".")]
+    gtf["transcript_id"] = [i[0] for i in gtf["transcript_id"].str.split(".")]
     
     # Save results
-    gtf.to_csv(OUTPUT, sep="\t", header=None)
-
-
+    gtf.to_csv(OUT, sep="\t", header=False, index=False)
 
 
 # ------------- #

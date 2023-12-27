@@ -7,18 +7,13 @@ configfile: "config/config.yaml"
 
 
 # Define modules
-module fetch:
+module setup:
     snakefile:
-        "rules/fetch.smk"
+        "rules/setup.smk"
     config:
         config
-
-
-module parse:
-    snakefile:
-        "rules/parse.smk"
-    config:
-        config
+    prefix:
+        "resources/gencode"
 
 
 module genes:
@@ -29,13 +24,10 @@ module genes:
 
 
 # Import modules
-use rule * from fetch as fetch_*
+use rule * from setup as setup_*
 
 
 use rule * from genes as genes_*
-
-
-use rule * from parse as parse_*
 
 
 ###
@@ -45,7 +37,5 @@ use rule * from parse as parse_*
 
 rule all:
     input:
-        #rules.fetch_all.input,
-        #rules.parse_all.input,
         rules.genes_all.input,
     default_target: True

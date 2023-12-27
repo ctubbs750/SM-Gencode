@@ -1,0 +1,68 @@
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however crucial for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+Using shell: /usr/bin/bash
+Provided cores: 16
+Rules claiming more threads will be scaled down.
+Job stats:
+job                                count
+-------------------------------  -------
+all                                    1
+genes_filter_gencode                   1
+genes_make_exons                       1
+genes_make_genes                       1
+genes_make_proms                       1
+genes_make_tss                         1
+setup_download_chromesome_sizes        1
+setup_download_gencode                 1
+setup_parse_gencode                    1
+total                                  9
+
+Select jobs to execute...
+
+[Wed Dec 27 09:25:06 2023]
+Job 4: 
+        Downloads gencode basic build based off of input assembly
+        
+Reason: Missing output files: resources/gencode/gencode.hg38.basic.annotation.gtf.gz
+
+
+[Wed Dec 27 09:25:06 2023]
+Job 7: 
+        Downloads chromosome sizes for BedTools commands
+        
+Reason: Missing output files: resources/gencode/hg38.fa.sizes
+
+[Wed Dec 27 09:25:07 2023]
+Finished job 7.
+1 of 9 steps (11%) done
+[Wed Dec 27 09:25:57 2023]
+Finished job 4.
+2 of 9 steps (22%) done
+Select jobs to execute...
+
+[Wed Dec 27 09:25:57 2023]
+Job 3: 
+        Parses gtf formatted raw gencode download. Notes:
+        - Formats to BED
+        - Strips gene versions
+        
+Reason: Missing output files: results/gencode/hg38/gencode.hg38.basic.annotation.gtf.parsed.tsv; Input files updated by another job: resources/gencode/gencode.hg38.basic.annotation.gtf.gz
+
+Activating conda environment: ../../../../../../../../../../../../../home/tubbsca/snakemake_condas/47260b91f283d546c72439ee43e92cd9_
+Activating conda environment: ../../../../../../../../../../../../../home/tubbsca/snakemake_condas/47260b91f283d546c72439ee43e92cd9_
+[Wed Dec 27 09:27:46 2023]
+Error in rule setup_parse_gencode:
+    jobid: 3
+    input: resources/gencode/gencode.hg38.basic.annotation.gtf.gz
+    output: results/gencode/hg38/gencode.hg38.basic.annotation.gtf.parsed.tsv
+    log: workflow/logs/parse_gencode-hg38.stdout, workflow/logs/parse_gencode-hg38.stderr (check log file(s) for error details)
+    conda-env: /home/tubbsca/snakemake_condas/47260b91f283d546c72439ee43e92cd9_
+
+RuleException:
+CalledProcessError in file /panfs/accrepfs.vampire/data/ruderferlab/projects/biovu/cnv/cre/CTCF-Variant-Annotation/snakemake/workflows/common/gencode/workflow/rules/setup.smk, line 77:
+Command 'source /panfs/accrepfs.vampire/home/tubbsca/miniforge-pypy3/bin/activate '/home/tubbsca/snakemake_condas/47260b91f283d546c72439ee43e92cd9_'; set -euo pipefail;  python /panfs/accrepfs.vampire/data/ruderferlab/projects/biovu/cnv/cre/CTCF-Variant-Annotation/snakemake/workflows/common/gencode/.snakemake/scripts/tmp4decjoxd.parse.py' returned non-zero exit status 1.
+  File "/panfs/accrepfs.vampire/data/ruderferlab/projects/biovu/cnv/cre/CTCF-Variant-Annotation/snakemake/workflows/common/gencode/workflow/rules/setup.smk", line 77, in __rule_parse_gencode
+  File "/accre/arch/easybuild/software/BinDist/Anaconda3/2022.05/lib/python3.9/concurrent/futures/thread.py", line 58, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2023-12-27T092455.483843.snakemake.log

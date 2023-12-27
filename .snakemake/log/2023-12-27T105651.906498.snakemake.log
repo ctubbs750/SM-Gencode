@@ -1,0 +1,7 @@
+Building DAG of jobs...
+MissingInputException in rule genes_make_proms in file /panfs/accrepfs.vampire/data/ruderferlab/projects/biovu/cnv/cre/CTCF-Variant-Annotation/snakemake/workflows/common/gencode/workflow/rules/genes.smk, line 93:
+Missing input files for rule genes_make_proms:
+    output: results/gencode/hg38/gencode.hg38.proms.protein_coding.bed
+    wildcards: ASSEMBLY=hg38
+    affected files:
+        resources/gencode/hg38.fa.sizes
