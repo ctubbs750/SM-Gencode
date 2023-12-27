@@ -11,7 +11,7 @@ rule download_gencode:
         Downloads gencode basic build based off of input assembly
         """
     output:
-        "{ASSEMBLY}/gencode.{ASSEMBLY}.basic.annotation.gtf.gz",
+        "resources/gencode/{ASSEMBLY}/gencode.{ASSEMBLY}.basic.annotation.gtf.gz",
     params:
         assembly=lambda wc: wc.ASSEMBLY,
         hg19_url=GENCODE_URL_HG19,
@@ -36,7 +36,7 @@ rule download_chromesome_sizes:
         Downloads chromosome sizes for BedTools commands
         """
     output:
-        "{ASSEMBLY}/{ASSEMBLY}.fa.sizes",
+        "resources/gencode/{ASSEMBLY}/{ASSEMBLY}.fa.sizes",
     params:
         assembly=lambda wc: wc.ASSEMBLY,
         hg19_url=UCSC_URL_HG19,
