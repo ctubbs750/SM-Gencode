@@ -1,4 +1,0 @@
-Building DAG of jobs...
-Your conda installation is not configured to use strict channel priorities. This is however crucial for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
-Nothing to be done (all requested files are present and up to date).
-Complete log: .snakemake/log/2023-12-27T110458.903236.snakemake.log

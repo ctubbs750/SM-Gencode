@@ -1,7 +1,0 @@
-Building DAG of jobs...
-MissingInputException in rule genes_parse_gencode in file /panfs/accrepfs.vampire/data/ruderferlab/projects/biovu/cnv/cre/CTCF-Variant-Annotation/snakemake/workflows/common/gencode/workflow/rules/genes.smk, line 30:
-Missing input files for rule genes_parse_gencode:
-    output: results/gencode/hg38/gencode.hg38.basic.annotation.gtf.parsed.tsv
-    wildcards: ASSEMBLY=hg38
-    affected files:
-        results/gencode/resources/gencode/hg38/gencode.hg38.basic.annotation.gtf.gz
