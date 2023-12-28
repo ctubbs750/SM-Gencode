@@ -12,8 +12,6 @@ module setup:
         "rules/setup.smk"
     config:
         config
-    prefix:
-        "resources/gencode"
 
 
 module genes:
