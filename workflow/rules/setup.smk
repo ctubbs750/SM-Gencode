@@ -1,8 +1,18 @@
+from snakemake.utils import min_version
+
+
+# Configuration
+configfile: "config/config.yaml"
+
+
 # Parameters
 UCSC_URL_HG19 = config["GENCODE"]["UCSC_URLS"]["hg19"]
 UCSC_URL_HG38 = config["GENCODE"]["UCSC_URLS"]["hg38"]
 GENCODE_URL_HG19 = config["GENCODE"]["GENCODE_URLS"]["hg19"]
 GENCODE_URL_HG38 = config["GENCODE"]["GENCODE_URLS"]["hg38"]
+
+# Settings
+min_version("7.32.4")
 
 
 rule download_gencode:
@@ -16,6 +26,8 @@ rule download_gencode:
         assembly=lambda wc: wc.ASSEMBLY,
         hg19_url=GENCODE_URL_HG19,
         hg38_url=GENCODE_URL_HG38,
+    conda:
+        "../envs/gencode.yaml"
     log:
         stdout="workflow/logs/download_gencode-{ASSEMBLY}.stdout",
         stderr="workflow/logs/download_gencode-{ASSEMBLY}.stderr",
@@ -41,6 +53,8 @@ rule download_chromesome_sizes:
         assembly=lambda wc: wc.ASSEMBLY,
         hg19_url=UCSC_URL_HG19,
         hg38_url=UCSC_URL_HG38,
+    conda:
+        "../envs/gencode.yaml"
     log:
         stdout="workflow/logs/download_chromesome_sizes-{ASSEMBLY}.stdout",
         stderr="workflow/logs/download_chromesome_sizes-{ASSEMBLY}.stderr",

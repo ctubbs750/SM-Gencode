@@ -1,9 +1,12 @@
 from snakemake.utils import min_version
 
-min_version("7.32.4")
 
-
+# Configuration
 configfile: "config/config.yaml"
+
+
+# Settings
+min_version("7.32.4")
 
 
 # Define modules

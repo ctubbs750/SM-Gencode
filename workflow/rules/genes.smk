@@ -1,6 +1,17 @@
+from snakemake.utils import min_version
+
+
+# Configuration
+configfile: "config/config.yaml"
+
+
 # Parameters
 BUILDS = config["GENCODE"]["BUILDS"]
 PROMOTER_WINDOW = config["GENCODE"]["PROMOTER_WINDOW"]
+
+# Settings
+min_version("7.32.4")
+
 
 rule all:
     input:
@@ -42,7 +53,7 @@ rule parse_gencode:
         stderr="workflow/logs/parse_gencode-{ASSEMBLY}.stderr",
     conda:
         "../envs/gencode.yaml"
-    threads: 8
+    threads: 4
     script:
         "../scripts/parse.py"
 
