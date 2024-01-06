@@ -1,15 +1,15 @@
 GENCODE:
   # Genome build
-  BUILDS:
+  builds:
     - hg38
     - hg19
   # Size of window on TSS to define promoters
-  PROMOTER_WINDOW: 2000
-  # Gencode URLS
-  GENCODE_URLS:
-    hg19: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/GRCh37_mapping/gencode.v44lift37.basic.annotation.gtf.gz
-    hg38: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.basic.annotation.gtf.gz
+  promoter_window: 2000
   # Chromosome size form UCSC URLS
-  UCSC_URLS:
+  ucsc_urls:
     hg19: https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.chrom.sizes
     hg38: https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
+  # Gencode URLS
+  gencode_urls:
+    hg19: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/GRCh37_mapping/gencode.v44lift37.basic.annotation.gtf.gz
+    hg38: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.basic.annotation.gtf.gz

@@ -9,26 +9,16 @@ configfile: "config/config.yaml"
 min_version("7.32.4")
 
 
-# Define modules
-module setup:
+# Modules
+module gencode:
     snakefile:
-        "rules/setup.smk"
+        "rules/gencode.smk"
     config:
-        config
-
-
-module genes:
-    snakefile:
-        "rules/genes.smk"
-    config:
-        config
+        config["GENCODE"]
 
 
 # Import modules
-use rule * from setup as setup_*
-
-
-use rule * from genes as genes_*
+use rule * from gencode as gencode_*
 
 
 ###
@@ -37,6 +27,10 @@ use rule * from genes as genes_*
 
 
 rule all:
+    message:
+        """
+        DEPLOYING GENCODE...
+        """
     input:
-        rules.genes_all.input,
+        rules.gencode_all.input,
     default_target: True
