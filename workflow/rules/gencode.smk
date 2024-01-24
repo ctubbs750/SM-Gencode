@@ -58,23 +58,23 @@ TRANSCRIPTS = path.join(
 rule all:
     input:
         expand(
-            "results/gencode/{ASSEMBLY}/gencode.{ASSEMBLY}.genes.protein_coding.bed",
+            GENES,
             ASSEMBLY=BUILDS,
         ),
         expand(
-            "results/gencode/{ASSEMBLY}/gencode.{ASSEMBLY}.exons.protein_coding.bed",
+            EXONS,
             ASSEMBLY=BUILDS,
         ),
         expand(
-            "results/gencode/{ASSEMBLY}/gencode.{ASSEMBLY}.proms.protein_coding.bed",
+            PROMS,
             ASSEMBLY=BUILDS,
         ),
         expand(
-            "results/gencode/{ASSEMBLY}/gencode.{ASSEMBLY}.tss.protein_coding.bed",
+            TSS,
             ASSEMBLY=BUILDS,
         ),
         expand(
-            "results/gencode/{ASSEMBLY}/gencode.{ASSEMBLY}.transcripts.protein_coding.bed",
+            TRANSCRIPTS,
             ASSEMBLY=BUILDS,
         ),
 
