@@ -1,15 +1,58 @@
+from os import listdir, path
 from snakemake.utils import min_version
 
-# Parameters
+
+# Settings
+min_version("7.32.4")
+
+
+# ------------- #
+# Config        #
+# ------------- #
+
 BUILDS = config["builds"]
+INSTALL_DIR = config["install_dir"]
+PROCESS_DIR = config["process_dir"]
 UCSC_URL_HG19 = config["ucsc_urls"]["hg19"]
 UCSC_URL_HG38 = config["ucsc_urls"]["hg38"]
 PROMOTER_WINDOW = config["promoter_window"]
 GENCODE_URL_HG19 = config["gencode_urls"]["hg19"]
 GENCODE_URL_HG38 = config["gencode_urls"]["hg38"]
 
-# Settings
-min_version("7.32.4")
+# ------------- #
+# I/O           #
+# ------------- #
+
+# Raw gencode download
+GENCODE_DOWNLOAD = path.join(
+    INSTALL_DIR, "{build}", "gencode.{build}.basic.annotation.gtf.gz"
+)
+
+# Chromosome sizes from UCSC
+CHROMOSOME_SIZES = path.join(INSTALL_DIR, "{build}", "{build}.fa.size")
+
+# Parsed gencode
+GENCODE_PARSED = path.join(
+    PROCESS_DIR, "{build}", "gencode.{build}.basic.annotation.gtf.parsed.tsv"
+)
+
+# Filtered gencode
+GENCODE_FILTERED = path.join(
+    PROCESS_DIR, "{build}", "gencode.{build}_protein_coding.no_chrM.bed"
+)
+
+# Final target features
+GENES = path.join(PROCESS_DIR, "{build}", "gencode.{build}.genes.protein_coding.bed")
+EXONS = path.join(PROCESS_DIR, "{build}", "gencode.{build}.exons.protein_coding.bed")
+PROMS = path.join(PROCESS_DIR, "{build}", "gencode.{build}.proms.protein_coding.bed")
+TSS = path.join(PROCESS_DIR, "{build}", "gencode.{build}.tss.protein_coding.bed")
+TRANSCRIPTS = path.join(
+    PROCESS_DIR, "{build}", "gencode.{build}.transcripts.protein_coding.bed"
+)
+
+# ------------- #
+# Rules         #
+# ------------- #
 
 
 rule all:
@@ -42,16 +85,16 @@ rule download_gencode:
         Downloads gencode basic build based off of input assembly.
         """
     output:
-        "resources/gencode/{BUILD}/gencode.{BUILD}.basic.annotation.gtf.gz",
+        GENCODE_DOWNLOAD,
     params:
-        build=lambda wc: wc.BUILD,
+        build=lambda wc: wc.build,
         hg19_url=GENCODE_URL_HG19,
         hg38_url=GENCODE_URL_HG38,
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/download_gencode-{BUILD}.stdout",
-        stderr="workflow/logs/download_gencode-{BUILD}.stderr",
+        stdout="workflow/logs/download_gencode-{build}.stdout",
+        stderr="workflow/logs/download_gencode-{build}.stderr",
     threads: 1
     shell:
         """
@@ -70,7 +113,7 @@ rule download_sizes:
         Downloads chromosome sizes for BedTools commands.
         """
     output:
-        "resources/gencode/{BUILD}/{BUILD}.fa.sizes",
+        CHROMOSOME_SIZES,
     params:
         build=lambda wc: wc.BUILD,
         hg19_url=UCSC_URL_HG19,
@@ -78,8 +121,8 @@ rule download_sizes:
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/download_sizes-{BUILD}.stdout",
-        stderr="workflow/logs/download_sizes-{BUILD}.stderr",
+        stdout="workflow/logs/download_sizes-{build}.stdout",
+        stderr="workflow/logs/download_sizes-{build}.stderr",
     threads: 1
     shell:
         """
@@ -102,12 +145,12 @@ rule parse_gencode:
     input:
         rules.download_gencode.output,
     output:
-        temp("results/gencode/{BUILD}/gencode.{BUILD}.basic.annotation.gtf.parsed.tsv"),
+        temp(GENCODE_PARSED),
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/parse_gencode-{BUILD}.stdout",
-        stderr="workflow/logs/parse_gencode-{BUILD}.stderr",
+        stdout="workflow/logs/parse_gencode-{build}.stdout",
+        stderr="workflow/logs/parse_gencode-{build}.stderr",
     threads: 4
     script:
         "../scripts/parse.py"
@@ -121,7 +164,7 @@ rule filter_gencode:
     input:
         rules.parse_gencode.output,
     output:
-        temp("results/gencode/{BUILD}/gencode.{BUILD}_protein_coding.no_chrM.bed"),
+        temp(GENCODE_FILTERED),
     conda:
         "../envs/gencode.yaml"
     log:
@@ -142,12 +185,12 @@ rule make_genes:
     input:
         rules.filter_gencode.output,
     output:
-        "results/gencode/{BUILD}/gencode.{BUILD}.genes.protein_coding.bed",
+        GENES,
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/make_genes-{BUILD}.stdout",
-        stderr="workflow/logs/make_genes-{BUILD}.stderr",
+        stdout="workflow/logs/make_genes-{build}.stdout",
+        stderr="workflow/logs/make_genes-{build}.stderr",
     threads: 1
     shell:
         """
@@ -163,12 +206,12 @@ rule make_exons:
     input:
         rules.filter_gencode.output,
     output:
-        "results/gencode/{BUILD}/gencode.{BUILD}.exons.protein_coding.bed",
+        EXONS,
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/make_exons-{BUILD}.stdout",
-        stderr="workflow/logs/make_exons-{BUILD}.stderr",
+        stdout="workflow/logs/make_exons-{build}.stdout",
+        stderr="workflow/logs/make_exons-{build}.stderr",
     threads: 1
     shell:
         """
@@ -185,14 +228,14 @@ rule make_promoters:
         genes=rules.make_genes.output,
         sizes=rules.download_sizes.output,
     output:
-        "results/gencode/{BUILD}/gencode.{BUILD}.proms.protein_coding.bed",
+        PROMS,
     params:
         window=PROMOTER_WINDOW,
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/make_proms-{BUILD}.stdout",
-        stderr="workflow/logs/make_proms-{BUILD}.stderr",
+        stdout="workflow/logs/make_proms-{build}.stdout",
+        stderr="workflow/logs/make_proms-{build}.stderr",
     threads: 1
     shell:
         """
@@ -200,7 +243,7 @@ rule make_promoters:
         """
 
 
-rule make_TSSs:
+rule make_TSS:
     message:
         """
         Makes transcription start sites for protein-coding genes.
@@ -209,12 +252,12 @@ rule make_TSSs:
         genes=rules.make_genes.output,
         sizes=rules.download_sizes.output,
     output:
-        "results/gencode/{BUILD}/gencode.{BUILD}.tss.protein_coding.bed",
+        TSS,
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/make_tss-{BUILD}.stdout",
-        stderr="workflow/logs/make_tss-{BUILD}.stderr",
+        stdout="workflow/logs/make_tss-{build}.stdout",
+        stderr="workflow/logs/make_tss-{build}.stderr",
     threads: 1
     shell:
         """
@@ -230,12 +273,12 @@ rule make_transcripts:
     input:
         rules.filter_gencode.output,
     output:
-        "results/gencode/{BUILD}/gencode.{BUILD}.transcripts.protein_coding.bed",
+        TRANSCRIPTS,
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/make_transcripts-{BUILD}.stdout",
-        stderr="workflow/logs/make_transcripts-{BUILD}.stderr",
+        stdout="workflow/logs/make_transcripts-{build}.stdout",
+        stderr="workflow/logs/make_transcripts-{build}.stderr",
     threads: 1
     shell:
         """

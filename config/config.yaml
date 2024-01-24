@@ -3,6 +3,9 @@ GENCODE:
   builds:
     - hg38
     - hg19
+  # Input and output dirs
+  install_dir: resources/gencode
+  process_dir: results/gencode
   # Size of window on TSS to define promoters
   promoter_window: 2000
   # Chromosome size form UCSC URLS
