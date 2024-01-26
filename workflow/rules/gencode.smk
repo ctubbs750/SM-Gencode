@@ -13,11 +13,16 @@ min_version("7.32.4")
 BUILDS = config["builds"]
 INSTALL_DIR = config["install_dir"]
 PROCESS_DIR = config["process_dir"]
-UCSC_URL_HG19 = config["ucsc_urls"]["hg19"]
-UCSC_URL_HG38 = config["ucsc_urls"]["hg38"]
+UCSC_URLS = {
+    "hg19": config["ucsc_urls"]["hg19"],
+    "hg38": config["ucsc_urls"]["hg38"],
+}
+
 PROMOTER_WINDOW = config["promoter_window"]
-GENCODE_URL_HG19 = config["gencode_urls"]["hg19"]
-GENCODE_URL_HG38 = config["gencode_urls"]["hg38"]
+GENCODE_URLS = {
+    "hg19": config["gencode_urls"]["hg19"],
+    "hg38": config["gencode_urls"]["hg38"],
+}
 
 # ------------- #
 # I/O           #
@@ -59,23 +64,23 @@ rule all:
     input:
         expand(
             GENES,
-            ASSEMBLY=BUILDS,
+            build=BUILDS,
         ),
         expand(
             EXONS,
-            ASSEMBLY=BUILDS,
+            build=BUILDS,
         ),
         expand(
             PROMS,
-            ASSEMBLY=BUILDS,
+            build=BUILDS,
         ),
         expand(
             TSS,
-            ASSEMBLY=BUILDS,
+            build=BUILDS,
         ),
         expand(
             TRANSCRIPTS,
-            ASSEMBLY=BUILDS,
+            build=BUILDS,
         ),
 
 
@@ -87,24 +92,14 @@ rule download_gencode:
     output:
         GENCODE_DOWNLOAD,
     params:
-        build=lambda wc: wc.build,
-        hg19_url=GENCODE_URL_HG19,
-        hg38_url=GENCODE_URL_HG38,
+        url=lambda wc: GENCODE_URLS[wc.build],
     conda:
         "../envs/gencode.yaml"
     log:
         stdout="workflow/logs/download_gencode-{build}.stdout",
         stderr="workflow/logs/download_gencode-{build}.stderr",
-    threads: 1
     shell:
-        """
-        if [ {params.build} == "hg19" ]
-        then
-            wget -O {output} {params.hg19_url}
-        else
-            wget -O {output} {params.hg38_url}
-        fi
-        """
+        "wget -O {output} {params.url}"
 
 
 rule download_sizes:
@@ -115,24 +110,14 @@ rule download_sizes:
     output:
         CHROMOSOME_SIZES,
     params:
-        build=lambda wc: wc.BUILD,
-        hg19_url=UCSC_URL_HG19,
-        hg38_url=UCSC_URL_HG38,
+        url=lambda wc: UCSC_URLS[wc.BUILD],
     conda:
         "../envs/gencode.yaml"
     log:
         stdout="workflow/logs/download_sizes-{build}.stdout",
         stderr="workflow/logs/download_sizes-{build}.stderr",
-    threads: 1
     shell:
-        """
-        if [ {params.build} == "hg19" ]
-        then
-            wget -O {output} {params.hg19_url}
-        else
-            wget -O {output} {params.hg38_url}
-        fi
-        """
+        "wget -O {output} {params.url}"
 
 
 rule parse_gencode:
@@ -151,7 +136,7 @@ rule parse_gencode:
     log:
         stdout="workflow/logs/parse_gencode-{build}.stdout",
         stderr="workflow/logs/parse_gencode-{build}.stderr",
-    threads: 4
+    threads: 2
     script:
         "../scripts/parse.py"
 
@@ -168,9 +153,8 @@ rule filter_gencode:
     conda:
         "../envs/gencode.yaml"
     log:
-        stdout="workflow/logs/filter_gencode-{BUILD}.stdout",
-        stderr="workflow/logs/filter_gencode-{BUILD}.stderr",
-    threads: 1
+        stdout="workflow/logs/filter_gencode-{build}.stdout",
+        stderr="workflow/logs/filter_gencode-{build}.stderr",
     shell:
         """
         vawk '{{ if ($7=="protein_coding" && $1!="chrM") print $0 }}' {input} > {output}
@@ -191,7 +175,6 @@ rule make_genes:
     log:
         stdout="workflow/logs/make_genes-{build}.stdout",
         stderr="workflow/logs/make_genes-{build}.stderr",
-    threads: 1
     shell:
         """
         vawk '{{ if ($9=="gene") print $1, $2, $3, $4, ".", $5, $6 }}' {input} > {output}
@@ -212,7 +195,6 @@ rule make_exons:
     log:
         stdout="workflow/logs/make_exons-{build}.stdout",
         stderr="workflow/logs/make_exons-{build}.stderr",
-    threads: 1
     shell:
         """
         vawk '{{ if ($9=="exon") print $1, $2, $3, $4, ".", $5, $6 }}' {input} > {output}
@@ -236,7 +218,6 @@ rule make_promoters:
     log:
         stdout="workflow/logs/make_proms-{build}.stdout",
         stderr="workflow/logs/make_proms-{build}.stderr",
-    threads: 1
     shell:
         """
         bedtools flank -i {input.genes} -g {input.sizes} -l {params.window} -r 0 -s > {output}
@@ -258,7 +239,6 @@ rule make_TSS:
     log:
         stdout="workflow/logs/make_tss-{build}.stdout",
         stderr="workflow/logs/make_tss-{build}.stderr",
-    threads: 1
     shell:
         """
         bedtools flank -i {input.genes} -g {input.sizes} -l 1 -r 0 -s > {output}
@@ -279,7 +259,6 @@ rule make_transcripts:
     log:
         stdout="workflow/logs/make_transcripts-{build}.stdout",
         stderr="workflow/logs/make_transcripts-{build}.stderr",
-    threads: 1
     shell:
         """
         vawk '{{ if ($9=="gene") print $1, $2, $3, $8, ".", $5, $6 }}' {input} > {output}

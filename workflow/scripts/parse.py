@@ -28,11 +28,12 @@ def main() -> None:
     ]
 
     # Strip "." of gene and transcript IDs
-    gtf["gene_id"] = [i[0] for i in gtf["gene_id"].str.split(".")]
-    gtf["transcript_id"] = [i[0] for i in gtf["transcript_id"].str.split(".")]
+    gtf["gene_id"] = gtf["gene_id"].apply(lambda x: x.split(".")[0])
+    gtf["transcript_id"] = gtf["transcript_id"].apply(lambda x: x.split(".")[0])
 
     # Save results
-    gtf.to_csv(OUT, sep="\t", header=False, index=False)
+    with open(OUT, "w") as f:
+        gtf.to_csv(f, sep="\t", header=False, index=False)
 
 
 # ------------- #

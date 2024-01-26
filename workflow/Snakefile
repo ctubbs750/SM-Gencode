@@ -33,4 +33,3 @@ rule all:
         """
     input:
         rules.gencode_all.input,
-    default_target: True
