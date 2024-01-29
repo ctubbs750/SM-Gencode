@@ -110,7 +110,7 @@ rule download_sizes:
     output:
         CHROMOSOME_SIZES,
     params:
-        url=lambda wc: UCSC_URLS[wc.BUILD],
+        url=lambda wc: UCSC_URLS[wc.build],
     conda:
         "../envs/gencode.yaml"
     log:
